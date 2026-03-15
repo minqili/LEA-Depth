@@ -2,11 +2,11 @@
 
 This is the reference PyTorch implementation for training and testing depth estimation models using the method described in
 
-## 👀Overview
-<img src="./img/overview.png" width="100%" alt="overview" align=center />
+## Abstract
+Monocular depth estimation plays a vital role in applications such as autonomous driving and augmented reality. However, traditional high-performance models typically require substantial computational resources, which limits their deployment on edge devices. To overcome this limitation, we propose  LEA-Depth, a lightweight and efficient self-supervised  monocular depth  estimation framework. LEA-Depth  incorporates an edge-aware multistage encoder and a bi-directional selective attention (BSA) module to improve both local and global feature representations. Moreover, we introduce an edge-aware multi-scale  distillation loss to refine depth prediction around object boundaries.  Extensive experiments on KITTI and Make3D datasets demonstrate that LEA-Depth achieves state-of-the-art accuracy with minimal model size,  making it ideal for realtime deployment in resource-constrained environments. Our code is publicly available.
+![Pipeline Structure](./img/overview.png)
 
-
-## ⚙️Setup
+## Setup
 
 Assuming a fresh [Anaconda](https://www.anaconda.com/download/) distribution, you can install the dependencies with:
 ```shell
@@ -20,10 +20,7 @@ pip install timm einops IPython
 
  Note that our code is built based on [Monodepth2](https://github.com/nianticlabs/monodepth2). However, we only use it for Monocular videos training and estimation.
 
-
-## 
-
-## 💾KITTI training data
+## Data preparation
 
 You can download the entire [raw KITTI dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php) by running:
 ```shell
@@ -59,17 +56,14 @@ You can also train a model using the new [benchmark split](http://www.cvlibs.net
 
 You can train on a custom monocular or stereo dataset by writing a new dataloader class which inherits from `MonoDataset` – see the `KITTIDataset` class in `datasets/kitti_dataset.py` for an example.
 
-## ⏳Training
-
-Pre-trained MonoViT can be avaliable at [here](https://github.com/zxcqlf/MonoViT) 
-
+## Training
 By default models and tensorboard event files are saved to `~/tmp/<model_name>`.
 This can be changed with the `--log_dir` flag.
 
 **Monocular training:**
 
 ```shell
-python --model_name model_name --num_layers 18 --decoder_channel_scale [200,100,50] --encoder_mobilevit ["xxs", "xs", "s"]
+python train.py --model_name model_name --data_path kitti_data  --num_layers 18 --decoder_channel_scale [200,100,50] --encoder_mobilevit ["xxs", "xs", "s"]
 ```
 
 The decoder_channel_scale means
@@ -89,9 +83,7 @@ The encoder_emo means the backbone network of LEA-Depth
 |  s   |  [EMO_s](https://drive.google.com/file/d/1IIuw5uE8r_9Fp-6tTzfYVrba4rRI6Skm/view?usp=sharing)  |
  
 
-
-
-## 📊KITTI evaluation
+## Evaluation
 
 To prepare the ground truth depth maps run:
 ```shell
@@ -159,7 +151,19 @@ Our various models complexit as follow:
 | LEA-Depth_small |            2             |    4.22M     |  3.78G |
 | LEA-Depth_tiny  |            2             |    7.25M     |  5.19G |
 
+## Single Image Inference
 
+To predict depth for a single image, run:
+```shell
+python test_simple.py --image_path assets/test_image.jpg --load_weights_folder path_to_trained_model --encoder_emo ["xxs", "xs", "s"] --decoder_channel_scale ["0.5", "1", "2"]
+```
+The predicted depth map will be saved in the output directory.
+
+## Qualitative Results
+
+Comparison of predicted depth maps on the KITTI dataset. Compared with existing monocular depth estimation methods such as **Monodepth2**, **Lite-Mono**, and **MViTDepth**, our **LEA-Depth** produces sharper object boundaries and more consistent depth structures. Highlighted regions demonstrate that our method better preserves fine-grained geometric details.
+
+![Pipeline Structure](./img/qualitative_results.png)
 
 ## Acknowledgement
 
