@@ -175,3 +175,10 @@ Thanks the authors for their works:
 
 [MobileViTv1](https://github.com/apple/ml-cvnets) 
 
+# Citation
+
+If this repo is helpful for your research, please consider citing the paper:
+
+  title={LEA-Depth: Lightweight Edge-Aware Attention for Self-Supervised Monocular Depth Estimation}
+
+
